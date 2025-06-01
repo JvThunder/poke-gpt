@@ -1,0 +1,4 @@
+smolagents[openai]
+flask
+flask_cors
+requests
