@@ -37,11 +37,11 @@ except Exception as e:
     traceback.print_exc()
     sys.exit(1)
 
-@app.route('/')
+@app.route('/api/')
 def index():
     return "Backend is running..."
 
-@app.route('/create_chat', methods=['POST'])
+@app.route('/api/create_chat', methods=['POST'])
 def create_chat():
     """Create a new chat session and return its ID"""
     try:
@@ -53,7 +53,7 @@ def create_chat():
         traceback.print_exc()
         return jsonify({'error': str(e)}), 500
 
-@app.route('/query', methods=['POST'])
+@app.route('/api/query', methods=['POST'])
 def query():
     """Send a query to a specific chat session"""
     data = request.json
@@ -74,7 +74,7 @@ def query():
         traceback.print_exc()
         return jsonify({'error': str(e)}), 500
 
-@app.route('/chat_history/<chat_id>', methods=['GET'])
+@app.route('/api/chat_history/<chat_id>', methods=['GET'])
 def chat_history(chat_id):
     """Get the chat history for a specific chat session"""
     try:
@@ -86,5 +86,5 @@ def chat_history(chat_id):
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    print("Starting Flask server on http://localhost:5000")
+    print("Starting Flask server on http://localhost:5002")
     app.run(debug=True, host='0.0.0.0')

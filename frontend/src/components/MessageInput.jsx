@@ -11,7 +11,7 @@ const SendIcon = () => (
         xmlns="http://www.w3.org/2000/svg"
     >
         <path
-            d="M2 21L23 12L2 3V10L17 12L2 14V21Z"
+            d="M3 20V4L22 12L3 20ZM5 17L17 12L5 7V10.5L11 12L5 13.5V17Z"
             fill="currentColor"
         />
     </svg>

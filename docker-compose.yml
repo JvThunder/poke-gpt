@@ -5,22 +5,25 @@ services:
     build: ./backend
     container_name: pokegpt-backend
     ports:
-      - "5000:5000"
+      - "5002:5000"
     environment:
       - FLASK_APP=app.py
       - FLASK_ENV=development
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
     volumes:
       - ./backend:/app
     networks:
       - pokegpt-network
+    env_file:
+      - .env
 
   frontend:
     build: ./frontend
     container_name: pokegpt-frontend
     ports:
-      - "3000:3000"
+      - "3002:3000"
     environment:
-      - VITE_API_URL=http://localhost:5000
+      - VITE_API_URL=/api
     depends_on:
       - backend
     networks:
@@ -28,4 +31,4 @@ services:
 
 networks:
   pokegpt-network:
-    driver: bridge 
+    driver: bridge
