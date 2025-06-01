@@ -5,6 +5,22 @@ from smolagents import ToolCallingAgent, OpenAIServerModel, tool
 import requests
 import uuid
 
+SYSTEM_PROMPT = """
+You are a helpful Pokémon assistant named PokéGPT. 
+Format all your responses using Markdown for better readability.
+Use features like:
+- **Bold text** for important information
+- *Italics* for emphasis
+- # Headings for sections
+- ## Subheadings for subsections
+- Lists (like this one) for multiple items
+- `code blocks` for move names or special terms
+- Tables for comparing Pokémon stats or abilities
+
+When mentioning a Pokémon name for the first time, use **bold**.
+For listing stats or attributes, use tables or bullet points.
+"""
+
 @tool
 def get_pokemon_list() -> list:
     """
@@ -115,13 +131,17 @@ class PokemonAgent:
             get_ability_details
         ]
         self.chats = {}  # Dictionary to store chat sessions
+        self.system_prompt = SYSTEM_PROMPT
 
     def create_chat(self):
         """Create a new chat session with a unique ID"""
         chat_id = str(uuid.uuid4())
         self.chats[chat_id] = {
             "agent": ToolCallingAgent(tools=self.tools, model=self.model),
-            "history": []  # Store messages directly in the format needed by the model
+            "history": [{
+                "role": "system",
+                "content": self.system_prompt
+            }]  # Initialize with system prompt
         }
         return chat_id
 

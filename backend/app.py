@@ -79,6 +79,8 @@ def chat_history(chat_id):
     """Get the chat history for a specific chat session"""
     try:
         history = pokemon_agent.get_chat_history(chat_id)
+        # remove system prompt from history
+        history = history[1:]
         return jsonify({'history': history})
     except Exception as e:
         print(f"Error getting chat history: {e}")
@@ -86,5 +88,5 @@ def chat_history(chat_id):
         return jsonify({'error': str(e)}), 500
 
 if __name__ == '__main__':
-    print("Starting Flask server on http://localhost:5002")
+    print("Starting Flask server")
     app.run(debug=True, host='0.0.0.0')

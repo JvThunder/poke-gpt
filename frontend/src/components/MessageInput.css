@@ -29,14 +29,15 @@
     color: white;
     border: none;
     border-radius: 50%;
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
     margin-left: 0.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     transition: background-color 0.2s, transform 0.1s;
+    padding: 0;
 }
 
 .send-button:hover:not(:disabled) {

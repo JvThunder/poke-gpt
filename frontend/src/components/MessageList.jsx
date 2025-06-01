@@ -1,3 +1,6 @@
+import React from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import './MessageList.css';
 
 function MessageList({ messages, isLoading }) {
@@ -24,7 +27,13 @@ function MessageList({ messages, isLoading }) {
                         className={`message ${message.role === 'user' ? 'user-message' : 'assistant-message'}`}
                     >
                         <div className="message-bubble">
-                            {message.content}
+                            {message.role === 'assistant' ? (
+                                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                                    {message.content}
+                                </ReactMarkdown>
+                            ) : (
+                                message.content
+                            )}
                         </div>
                     </div>
                 ))

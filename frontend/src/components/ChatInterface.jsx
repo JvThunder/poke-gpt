@@ -8,6 +8,7 @@ function ChatInterface({ chatId }) {
     const [messages, setMessages] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [invalidChatId, setInvalidChatId] = useState(false);
     const messagesEndRef = useRef(null);
 
     // Load chat history when component mounts or chatId changes
@@ -30,12 +31,31 @@ function ChatInterface({ chatId }) {
     const loadChatHistory = async () => {
         setIsLoading(true);
         setError(null);
+        setInvalidChatId(false);
+
         try {
             const response = await api.get(`/chat_history/${chatId}`);
             setMessages(response.data.history);
         } catch (err) {
-            setError('Failed to load chat history. Please try again.');
             console.error('Error loading chat history:', err);
+
+            // Check if the error is due to an invalid chat ID
+            if (err.response && err.response.status === 404) {
+                setInvalidChatId(true);
+                setError('This chat session does not exist. Please create a new chat.');
+
+                // Remove the invalid chatId from URL
+                const url = new URL(window.location);
+                url.searchParams.delete('chatId');
+                window.history.pushState({}, '', url);
+
+                // Redirect to home after a short delay
+                setTimeout(() => {
+                    window.location.reload();
+                }, 3000);
+            } else {
+                setError('Failed to load chat history. Please try again.');
+            }
         } finally {
             setIsLoading(false);
         }
@@ -43,7 +63,7 @@ function ChatInterface({ chatId }) {
 
     // Send a message to the API
     const sendMessage = async (text) => {
-        if (!text.trim()) return;
+        if (!text.trim() || invalidChatId) return;
 
         // Optimistically add user message to UI
         const userMessage = { role: 'user', content: text };
@@ -63,8 +83,14 @@ function ChatInterface({ chatId }) {
             const aiMessage = { role: 'assistant', content: response.data.response };
             setMessages(prevMessages => [...prevMessages, aiMessage]);
         } catch (err) {
-            setError('Failed to send message. Please try again.');
             console.error('Error sending message:', err);
+
+            if (err.response && err.response.status === 404) {
+                setInvalidChatId(true);
+                setError('This chat session is no longer valid. Please create a new chat.');
+            } else {
+                setError('Failed to send message. Please try again.');
+            }
         } finally {
             setIsLoading(false);
         }
@@ -80,6 +106,7 @@ function ChatInterface({ chatId }) {
             <MessageInput
                 onSendMessage={sendMessage}
                 isLoading={isLoading}
+                disabled={invalidChatId}
             />
         </div>
     );

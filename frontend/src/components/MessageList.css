@@ -88,7 +88,8 @@
     align-items: center;
     justify-content: center;
     text-align: center;
-    height: 100%;
+    min-height: calc(100vh - 110px);
+    /* Adjusted to account for header and input */
     color: #666;
     padding: 2rem;
 }
@@ -112,4 +113,86 @@
 
 .examples li {
     margin-bottom: 0.5rem;
+}
+
+/* Markdown Styling */
+.assistant-message .message-bubble {
+    line-height: 1.6;
+}
+
+.assistant-message .message-bubble h1 {
+    font-size: 1.6rem;
+    margin: 0.8rem 0;
+    color: #e61515;
+}
+
+.assistant-message .message-bubble h2 {
+    font-size: 1.4rem;
+    margin: 0.7rem 0;
+    color: #e61515;
+}
+
+.assistant-message .message-bubble h3 {
+    font-size: 1.2rem;
+    margin: 0.6rem 0;
+}
+
+.assistant-message .message-bubble ul,
+.assistant-message .message-bubble ol {
+    margin: 0.5rem 0;
+    padding-left: 1.5rem;
+}
+
+.assistant-message .message-bubble li {
+    margin-bottom: 0.3rem;
+}
+
+.assistant-message .message-bubble code {
+    background-color: #f1f1f1;
+    padding: 0.1rem 0.3rem;
+    border-radius: 3px;
+    font-family: monospace;
+    font-size: 0.9rem;
+}
+
+.assistant-message .message-bubble pre {
+    background-color: #f1f1f1;
+    padding: 0.5rem;
+    border-radius: 5px;
+    overflow-x: auto;
+    margin: 0.5rem 0;
+}
+
+.assistant-message .message-bubble table {
+    border-collapse: collapse;
+    margin: 1rem 0;
+    width: 100%;
+    font-size: 0.9rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.assistant-message .message-bubble th,
+.assistant-message .message-bubble td {
+    border: 1px solid #e0e0e0;
+    padding: 0.6rem;
+    text-align: left;
+}
+
+.assistant-message .message-bubble th {
+    background-color: #e61515;
+    color: white;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+}
+
+.assistant-message .message-bubble tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.assistant-message .message-bubble tr:hover {
+    background-color: #f1f1f1;
 }

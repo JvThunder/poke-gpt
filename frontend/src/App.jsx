@@ -10,10 +10,29 @@ function App() {
   const [error, setError] = useState(null)
   const [retryCount, setRetryCount] = useState(0)
 
-  // Create a new chat session when the app loads
+  // Check for chat ID in URL or create a new chat session when the app loads
   useEffect(() => {
-    createNewChat()
+    const params = new URLSearchParams(window.location.search)
+    const chatIdFromUrl = params.get('chatId')
+
+    if (chatIdFromUrl) {
+      console.log('Using chat ID from URL:', chatIdFromUrl)
+      setChatId(chatIdFromUrl)
+    } else {
+      console.log('No chat ID in URL, creating new chat')
+      createNewChat()
+    }
   }, [])
+
+  // Update URL when chat ID changes
+  useEffect(() => {
+    if (chatId) {
+      // Update URL without reloading page
+      const url = new URL(window.location)
+      url.searchParams.set('chatId', chatId)
+      window.history.pushState({}, '', url)
+    }
+  }, [chatId])
 
   // Retry creating a chat session if it fails
   useEffect(() => {
