@@ -2,32 +2,28 @@ version: '3.8'
 
 services:
   backend:
-    build: ./backend
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
     container_name: pokegpt-backend
     ports:
       - "5002:5000"
     environment:
       - FLASK_APP=app.py
       - FLASK_ENV=development
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - CORS_ORIGINS=https://poke-gpt.jvthunder.org
     volumes:
       - ./backend:/app
-    networks:
-      - pokegpt-network
-    env_file:
-      - .env
 
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
     container_name: pokegpt-frontend
     ports:
       - "3002:3000"
-    environment:
-      - VITE_API_URL=/api
     depends_on:
       - backend
-    networks:
-      - pokegpt-network
 
 networks:
   pokegpt-network:

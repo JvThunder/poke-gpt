@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 // Use the environment variable with a fallback value
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+const API_URL = process.env.VITE_API_URL || 'https://poke-gpt.jvthunder.org/api';
 
 // Create axios instance with default config
 const api = axios.create({
