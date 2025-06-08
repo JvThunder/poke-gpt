@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import './MessageInput.css';
 
 // Updated send icon component with smaller image size
@@ -10,14 +10,32 @@ const SendIcon = () => (
     />
 );
 
-function MessageInput({ onSendMessage, isLoading, disabled }) {
-    const [message, setMessage] = useState('');
+function MessageInput({ onSendMessage, isLoading, disabled, message, setMessage }) {
+    // Use the message from props if provided, otherwise use local state
+    const [localMessage, setLocalMessage] = useState('');
 
+    // Determine if we're using controlled or uncontrolled input
+    const isControlled = message !== undefined && setMessage !== undefined;
+    const currentMessage = isControlled ? message : localMessage;
+
+    // Function to update the message
+    const updateMessage = (newMessage) => {
+        if (isControlled) {
+            setMessage(newMessage);
+        } else {
+            setLocalMessage(newMessage);
+        }
+    };
+
+    // Handle the submit event
     const handleSubmit = (e) => {
         e.preventDefault();
-        if (message.trim() && !isLoading && !disabled) {
-            onSendMessage(message);
-            setMessage('');
+        if (currentMessage.trim() && !isLoading && !disabled) {
+            onSendMessage(currentMessage);
+            // Only clear the message if using local state
+            if (!isControlled) {
+                setLocalMessage('');
+            }
         }
     };
 
@@ -29,14 +47,14 @@ function MessageInput({ onSendMessage, isLoading, disabled }) {
                 type="text"
                 className="message-input"
                 placeholder={disabled ? "Chat session unavailable..." : "Ask about Pokémon..."}
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
+                value={currentMessage}
+                onChange={(e) => updateMessage(e.target.value)}
                 disabled={isDisabled}
             />
             <button
                 type="submit"
                 className="send-button"
-                disabled={isDisabled || !message.trim()}
+                disabled={isDisabled || !currentMessage.trim()}
             >
                 <SendIcon />
             </button>

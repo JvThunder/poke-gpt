@@ -18,10 +18,43 @@
     padding: 0 1rem;
 }
 
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
 .header-title {
     font-size: 1.8rem;
     font-weight: 700;
     margin: 0;
+}
+
+.header-tabs {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.header-tab {
+    background-color: transparent;
+    color: rgba(255, 255, 255, 0.8);
+    border: none;
+    padding: 0.25rem 1rem;
+    border-radius: 4px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s, color 0.2s;
+    font-size: 0.95rem;
+}
+
+.header-tab:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: white;
+}
+
+.header-tab.active {
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
 }
 
 .new-chat-btn {
@@ -42,4 +75,62 @@
 
 .new-chat-btn:active {
     transform: translateY(0);
+}
+
+.favorites-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background-color: white;
+    color: #e61515;
+    border-radius: 50%;
+    font-size: 0.9rem;
+    font-weight: 700;
+    font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+    min-width: 24px;
+    height: 24px;
+    padding: 0 4px;
+    margin-left: 8px;
+    line-height: 1;
+    position: relative;
+    top: -1px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+    text-align: center;
+    transform: translateY(-1px);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.header-tab:hover .favorites-badge {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 3px 5px rgba(0, 0, 0, 0.2);
+}
+
+.header-tab.active .favorites-badge {
+    background-color: white;
+    color: #e61515;
+    font-weight: 700;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.pokeball-icon {
+    display: inline-block;
+    margin-right: 6px;
+    vertical-align: middle;
+    position: relative;
+    top: -1px;
+}
+
+@media (max-width: 600px) {
+    .header-left {
+        gap: 0.75rem;
+    }
+
+    .header-title {
+        font-size: 1.5rem;
+    }
+
+    .header-tab {
+        padding: 0.25rem 0.75rem;
+        font-size: 0.85rem;
+    }
 }

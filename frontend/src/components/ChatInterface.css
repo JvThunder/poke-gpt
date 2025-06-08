@@ -19,3 +19,26 @@
     text-align: center;
     border-bottom: 1px solid #f5c6cb;
 }
+
+.chat-info {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+    color: #888;
+    padding: 0 0.5rem;
+    font-family: monospace;
+}
+
+.user-id-display {
+    text-align: right;
+}
+
+.chat-owner {
+    text-align: left;
+}
+
+.chat-owner.is-owner {
+    color: #4caf50;
+    font-weight: bold;
+}
