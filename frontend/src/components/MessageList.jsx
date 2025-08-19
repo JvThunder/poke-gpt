@@ -58,13 +58,13 @@ function MessageList({ messages, isLoading, onExampleClick }) {
                                 message.content
                             )}
                         </div>
-                        {message.role === 'assistant' && message.tool_calls && message.tool_calls.length > 0 && (
+                        {/* {message.role === 'assistant' && message.tool_calls && message.tool_calls.length > 0 && (
                             <div className="tool-calls-container">
                                 {message.tool_calls.map((toolCall, i) => (
                                     <ToolCall key={i} toolCall={toolCall} />
                                 ))}
                             </div>
-                        )}
+                        )} */}
                     </div>
                 ))
             )}

@@ -1,4 +1,7 @@
+smolagents[toolkit]
 smolagents[openai]
 flask
 flask_cors
 requests
+duckduckgo-search
+ddgs

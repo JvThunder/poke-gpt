@@ -2,7 +2,8 @@ from locale import currency
 import dotenv
 dotenv.load_dotenv()
 
-from smolagents import ToolCallingAgent, OpenAIServerModel, tool
+from smolagents import ToolCallingAgent, OpenAIServerModel, tool, DuckDuckGoSearchTool
+
 import requests
 import uuid
 import os
@@ -64,6 +65,7 @@ You have access to the following tools that you should use to help users:
 - add_to_favorites: Add a Pokémon to the user's favorites list
 - remove_from_favorites: Remove a Pokémon from the user's favorites list
 - get_user_favorites: Get all favorites for a specific user
+- DuckDuckGoSearchTool: Search the web for information (use this as a last resort and double check pokemon names, id, abilities, etc.)
 
 The currency user's ID is {user_id}.
 """
@@ -325,7 +327,8 @@ class PokemonAgent:
             get_ability_details,
             add_to_favorites,
             remove_from_favorites,
-            get_user_favorites
+            get_user_favorites,
+            DuckDuckGoSearchTool()
         ]
         self.chats = {}  # Dictionary to store chat sessions
         self.tool_calls = []  # Add storage for tool calls
@@ -378,12 +381,15 @@ class PokemonAgent:
         
         response = ""
         tool_calls_this_turn = []
-
+        final_step = None
 
         merged_query = str("Chat Context: " + str(chat["history"]) + "\n" + "User Query: " + query)
         try:
             # Use stream=True to get intermediate steps
             for step in chat["agent"].run(merged_query, stream=True):
+                final_step = step  # Keep track of the last step
+                print(f"[DEBUG] Step type: {type(step)}, has model_output_message: {hasattr(step, 'model_output_message')}")
+                
                 # The 'step' is an ActionStep object. We need to inspect its attributes.
                 # Based on smolagents, the tool call info is in the 'action' attribute of the step's model_output_message.
                 if hasattr(step, 'model_output_message') and step.model_output_message and hasattr(step.model_output_message, 'tool_calls') and step.model_output_message.tool_calls:
@@ -396,10 +402,47 @@ class PokemonAgent:
                         tool_calls_this_turn.append(tool_call)
                         chat["tool_calls"].append(tool_call)  # Persist to chat session
 
+                # Capture any action output (tool results)
                 if hasattr(step, 'action_output') and step.action_output:
                     response = str(step.action_output)
 
-            # If the final step didn't have action_output, the result might be the step itself
+            # Try to get the final response from the last step in various ways
+            if not response and final_step:
+                print(f"[DEBUG] Trying to extract response from final step: {type(final_step)}")
+                
+                # Check if the final step has the complete response
+                if hasattr(final_step, 'model_output_message') and final_step.model_output_message:
+                    print(f"[DEBUG] Final step has model_output_message: {type(final_step.model_output_message)}")
+                    if hasattr(final_step.model_output_message, 'content') and final_step.model_output_message.content:
+                        response = final_step.model_output_message.content
+                        print(f"[DEBUG] Found response in model_output_message.content: {response[:100]}...")
+                    elif hasattr(final_step.model_output_message, 'text') and final_step.model_output_message.text:
+                        response = final_step.model_output_message.text
+                        print(f"[DEBUG] Found response in model_output_message.text: {response[:100]}...")
+                
+                # If still no response, check if the step itself contains the response
+                if not response:
+                    if hasattr(final_step, 'content') and final_step.content:
+                        response = final_step.content
+                    elif hasattr(final_step, 'text') and final_step.text:
+                        response = final_step.text
+                    elif hasattr(final_step, 'action_output') and final_step.action_output:
+                        response = str(final_step.action_output)
+
+            # Alternative: Try to run without streaming to get the complete response
+            if not response:
+                try:
+                    non_stream_response = chat["agent"].run(merged_query, stream=False)
+                    if hasattr(non_stream_response, 'content'):
+                        response = non_stream_response.content
+                    elif hasattr(non_stream_response, 'text'):
+                        response = non_stream_response.text
+                    else:
+                        response = str(non_stream_response)
+                except Exception as e:
+                    print(f"[WARNING] Non-streaming fallback failed: {e}")
+
+            # Final fallback if we still don't have a response
             if not response and tool_calls_this_turn:
                 response = f"I've used the following tools: {', '.join([tc['tool_name'] for tc in tool_calls_this_turn])}."
 
